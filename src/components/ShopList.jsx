@@ -6,15 +6,14 @@ import Error from "./Error";
 const requestConfig = {};
 //ova komponenta služi za dohvaćanje podataka sa FakeStore-a
 export default function ShopList () {
-    //imati ćemo State gdje želimo spremiti učitan sadržaj u array
     const {
-        data : loadedItems,
-        isLoading,
+        data : loadedItems, //postavljamo loadedItems radi korištenja u returnu
+        isLoading, 
         error
     } = useHttp('https://fakestoreapi.com/products', requestConfig, [])
 
     if(isLoading) {
-        return <p>Fetching store items...</p>
+        return <p>Fetching store items...</p> //paragraf koji se prikazuje prilikom dohvaćanja podataka
      }
  
      if(error) {
@@ -23,7 +22,7 @@ export default function ShopList () {
 
     
 
-    //u returnu prikazujemo dobivene podatke iz našeg state-a
+    //u returnu prikazujemo dobivene podatke iz našeg state-a (items array)
     return (
             <ul className="shop-list">
                 {loadedItems.map((shopItem) => {

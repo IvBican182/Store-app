@@ -9,21 +9,21 @@ const ShoppingProgressContext = createContext({
 
 });
 
-export function ShoppingProgressContextProvider({children}) {
-    const [shoppingProgress, setShoppingProgress] = useState("");
+export function ShoppingProgressContextProvider({children}) { //niže navedene state-ove ćemo postaviti na "open" prop na Modal u komponentama(u returnu komponenti)
+    const [shoppingProgress, setShoppingProgress] = useState(""); //te na taj način otvarati te komponente.
 
     function showCart() {
-        setShoppingProgress("cart");
+        setShoppingProgress("cart"); //kad postavimo na "cart" želimo da se otvori Cart komponenta
     }
 
     function hideCart() {
-        setShoppingProgress("");
+        setShoppingProgress(""); //zatvaranje Carta
     }
     function showCheckout() {
-        setShoppingProgress("checkout");
+        setShoppingProgress("checkout"); //otvaranje checkout komponente
     }
     function hideCheckout() {
-        setShoppingProgress("");
+        setShoppingProgress(""); //zatvara checkout
     }
 
     const shoppingProgressContext = {

@@ -7,7 +7,7 @@ import Modal from "./UI/Modal";
 import useHttp from "../hooks/useHttp";
 import { currencyFormatter } from "../utils/formatter";
 
-
+//određujemo config za slanje podataka.
 const requestConfig = {
     method: "POST",
     headers: {
@@ -16,23 +16,26 @@ const requestConfig = {
 }
 
 export default function checkout() {
-    const shoppingProgressCtx = useContext(ShoppingProgressContext);
+    const shoppingProgressCtx = useContext(ShoppingProgressContext); //uvozimo state-ove
     const cartCtx = useContext(CartContext);
 
+    //primamo vrijednosti iz useHttp hooka
     const {
         data,
         sendRequest,
         clearData
     } = useHttp('https://fakestoreapi.com/carts', requestConfig)
 
+
+    //određujemo totalnu vrijednost košarice
     const cartTotal = cartCtx.items.reduce((totalItemPrice, item) => {
         return totalItemPrice + item.quantity * item.price;
     }, 0)
-
+    //funkcija za sakrivanje Checkout modal-a
     function handleClose () {
         shoppingProgressCtx.hideCheckout();
     }
-
+    //funkcija koja zatvara checkout , ali i čisti našu košaricu te postavlja items Array na initialValue (prazan array)
     function handleFinish () {
         shoppingProgressCtx.hideCheckout();
         cartCtx.clearCart();
@@ -46,6 +49,7 @@ export default function checkout() {
         <Button>Submit order</Button>
         </>)
 
+    //submit za našu formu
     function handleSubmit (event){
         event.preventDefault();
 
@@ -53,7 +57,7 @@ export default function checkout() {
         const customerData = Object.fromEntries(fd.entries());
 
         console.log(customerData);
-
+        //šaljemo request
         sendRequest(JSON.stringify({
             order: {
                 items: cartCtx.items,
@@ -61,8 +65,9 @@ export default function checkout() {
         }));
 
 
-    }
 
+    }
+    //ukoliko pošaljemo request i imamo nekakav data , otvori Success Modal
     if(data) {
         return ( <Modal
             open={shoppingProgressCtx.progress === "checkout"}onClose={handleClose}> 
@@ -77,7 +82,7 @@ export default function checkout() {
    
 
     return (
-        <Modal open={shoppingProgressCtx.progress === "checkout"}
+        <Modal open={shoppingProgressCtx.progress === "checkout"} //ukoliko je progress === "checkout" otvori Checkout Modal
         onClose={handleFinish}>
             <form onSubmit={handleSubmit}>
                 <h2>Checkout:</h2>

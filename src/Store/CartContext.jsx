@@ -7,7 +7,7 @@ const CartContext = createContext({
 })
 
 function cartReducer(state, action) {
-    //logika za dodavanje item objekta i update State-a
+    //logika za dodavanje item objekta
     if(action.type === "ADD_ITEM") {
         //znamo da moramo dobiti update-an array, stoga možemo prvo definirati našu zadnju verziju arraya
         const updatedItems = [...state.items];
@@ -25,7 +25,7 @@ function cartReducer(state, action) {
             }
             updatedItems[existingItemIndex] = updatedShopItem;
             
-        }else { //ukoliko nemamo isti objekt već u array-u, dodati ćemo novi objekt (gdje proširujemo novi item te mu dodajemo quantity: 1)
+        }else { //ukoliko nemamo isti objekt već u array-u, dodati ćemo novi objekt (gdje proširujemo novi predmet te mu dodajemo quantity: 1)
             updatedItems.push({...action.item, quantity: 1})
 
         }
@@ -33,31 +33,31 @@ function cartReducer(state, action) {
 
         console.log(updatedItems);
        
-        //vraćamo novi update-ani state
+        //vraćamo novi update-ani state array
         return {...state, items: updatedItems}
     }
 
     if (action.type === "CLEAR_CART") {
-        return {...state, items:[]}
+        return {...state, items:[]} //postavljamo ponovno prazan array, dakle brišemo sve stavke
     }
 
-    if(action.type === "REMOVE_ITEM") {
+    if(action.type === "REMOVE_ITEM") { //slična logika kao za dodavanje predmeta
         const existingCartItemIndex = state.items.findIndex((item) => item.id === action.id);
 
         const existingItem = state.items[existingCartItemIndex];
 
         const updatedItems = [...state.items]
 
-        if(existingItem.quantity === 1) {
+        if(existingItem.quantity === 1) { //ako je quantity 1 želimo objekt u potpunosti maknuti
             updatedItems.splice(existingCartItemIndex, 1)
         }else {
             const updatedItem = {
                 ...existingItem,
-                quantity: existingItem.quantity - 1
+                quantity: existingItem.quantity - 1 //ukoliko je quantity veći od 1 želimo ga smanjivati za 1 
             }
             updatedItems[existingCartItemIndex] = updatedItem;
         }
-        return {...state, items: updatedItems}
+        return {...state, items: updatedItems} //vraćamo update-ani array state
     }
 
 
@@ -65,7 +65,7 @@ return state;
 
 }
 
-export function CartContextProvider({children}) {
+export function CartContextProvider({children}) { //context provider funkcija 
     const [cart, dispatchCartAction] = useReducer(cartReducer, {items:[]})
 
     function addItem(item) {

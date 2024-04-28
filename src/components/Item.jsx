@@ -7,8 +7,8 @@ import { currencyFormatter } from "../utils/formatter";
 export default function Item({shopItem}) {
     const cartCtx = useContext(CartContext);
 
-    function handleAddItemToCart() {
-        cartCtx.addItem(shopItem);
+    function handleAddItemToCart() { 
+        cartCtx.addItem(shopItem); //funkcija iz CartContexta
     }
     return (
         <li className="shop-item">

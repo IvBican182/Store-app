@@ -7,7 +7,7 @@ import CartItem from "./CartItem";
 import { currencyFormatter } from "../utils/formatter";
 
 export default function ShoppingCart() {
-    const cartCtx = useContext(CartContext);
+    const cartCtx = useContext(CartContext); //uvesti ćemo naše state-ove iz contexta
     const shoppingProgressCtx = useContext(ShoppingProgressContext);
     
     const cartTotatPrice = cartCtx.items.reduce((totalPrice, item) => {
@@ -23,18 +23,18 @@ export default function ShoppingCart() {
     }
 
     return (
-        <Modal open={shoppingProgressCtx.progress === "cart"}
+        <Modal open={shoppingProgressCtx.progress === "cart"} //otvaramo modal ako je progress === "cart"
         onClose={shoppingProgressCtx.progress === "cart" ? handleHideCart : null}>
             <h2>Your Cart</h2>
             <ul>
-                {cartCtx.items.map((item) => {
+                {cartCtx.items.map((item) => { //prikazujemo array predmete u našoj košarici
                     return <CartItem 
                     key={item.id} 
                     price={item.price}
                     name={item.name}
                     img={item.image}
                     quantity={item.quantity}
-                    onIncrease={() => cartCtx.addItem(item)}
+                    onIncrease={() => cartCtx.addItem(item)} //prebacujemo funkcije za dodavanje ili brisanje predmeta
                     onDecrease={() => cartCtx.removeItem(item.id)}/>
                 })}
             </ul>
@@ -42,7 +42,7 @@ export default function ShoppingCart() {
             <p className="modal-actions">
                 <Button onClick={handleHideCart}>Close</Button>
                 {cartCtx.items.length > 0 ? (<Button onClick={handleOpenCheckout}>Go to Checkout</Button>) : <span>Your cart is empty!</span>}
-            </p>
+            </p> {/*ako je state array veći od 0 prikazujemo gumb za checkout, u suprotnom pokazujemo da je košarica prazna*/}
         </Modal>
     )
 }
