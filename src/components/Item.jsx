@@ -1,14 +1,16 @@
-import CartContext from "../Store/CartContext"
+
 import Button from "./UI/Button"
-import { useContext } from "react"
+
 import { currencyFormatter } from "../utils/formatter";
+import { useDispatch, useSelector } from "react-redux";
+import { cartActions } from "../Store/cartState-slice";
 
 //komponenta za izgled svake stavke na shopping listi
 export default function Item({shopItem}) {
-    const cartCtx = useContext(CartContext);
+    const dispatch = useDispatch();
 
     function handleAddItemToCart() { 
-        cartCtx.addItem(shopItem); //funkcija iz CartContexta
+        dispatch(cartActions.addItem(shopItem)); //funkcija iz CartContexta
     }
     return (
         <li className="shop-item">

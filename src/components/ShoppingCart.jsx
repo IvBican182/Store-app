@@ -1,47 +1,51 @@
 import Modal from "./UI/Modal";
 import Button from "./UI/Button";
 import { useContext } from "react";
-import CartContext from "../Store/CartContext";
-import ShoppingProgressContext from "../Store/ShoppingProgressContext";
+import { useDispatch, useSelector } from "react-redux";
+
 import CartItem from "./CartItem";
 import { currencyFormatter } from "../utils/formatter";
+import { uiActions } from "../Store/UI-slice";
+import { cartActions } from "../Store/cartState-slice";
 
 export default function ShoppingCart() {
-    const cartCtx = useContext(CartContext); //uvesti ćemo naše state-ove iz contexta
-    const shoppingProgressCtx = useContext(ShoppingProgressContext);
+    const cartItems = useSelector(state=> state.cart.items)
+    const uiProgress = useSelector(state => state.ui.progress)
+    const dispatch = useDispatch();
+
     
-    const cartTotatPrice = cartCtx.items.reduce((totalPrice, item) => {
+    const cartTotatPrice = cartItems.reduce((totalPrice, item) => {
         return totalPrice + item.quantity * item.price;
     }, 0)
 
     function handleOpenCheckout () {
-        shoppingProgressCtx.showCheckout();
+        dispatch(uiActions.showCheckout());
     }
 
     function handleHideCart() {
-        shoppingProgressCtx.hideCart();
+        dispatch(uiActions.hideCart());
     }
 
     return (
-        <Modal open={shoppingProgressCtx.progress === "cart"} //otvaramo modal ako je progress === "cart"
-        onClose={shoppingProgressCtx.progress === "cart" ? handleHideCart : null}>
+        <Modal open={uiProgress === "cart"} //otvaramo modal ako je progress === "cart"
+        onClose={uiProgress === "cart" ? handleHideCart : null}>
             <h2>Your Cart</h2>
             <ul>
-                {cartCtx.items.map((item) => { //prikazujemo array predmete u našoj košarici
+                {cartItems.map((item) => { //prikazujemo array predmete u našoj košarici
                     return <CartItem 
                     key={item.id} 
                     price={item.price}
                     name={item.name}
                     img={item.image}
                     quantity={item.quantity}
-                    onIncrease={() => cartCtx.addItem(item)} //prebacujemo funkcije za dodavanje ili brisanje predmeta
-                    onDecrease={() => cartCtx.removeItem(item.id)}/>
+                    onIncrease={() => dispatch(cartActions.addItem(item))} //prebacujemo funkcije za dodavanje ili brisanje predmeta
+                    onDecrease={() => dispatch(cartActions.removeItem(item.id))}/>
                 })}
             </ul>
             <p className="total">{currencyFormatter.format(cartTotatPrice)}</p>
             <p className="modal-actions">
                 <Button onClick={handleHideCart}>Close</Button>
-                {cartCtx.items.length > 0 ? (<Button onClick={handleOpenCheckout}>Go to Checkout</Button>) : <span>Your cart is empty!</span>}
+                {cartItems.length > 0 ? (<Button onClick={handleOpenCheckout}>Go to Checkout</Button>) : <span>Your cart is empty!</span>}
             </p> {/*ako je state array veći od 0 prikazujemo gumb za checkout, u suprotnom pokazujemo da je košarica prazna*/}
         </Modal>
     )

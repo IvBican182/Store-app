@@ -1,20 +1,19 @@
-import { useContext } from "react";
-import ShoppingProgressContext from "../Store/ShoppingProgressContext";
-import CartContext from "../Store/CartContext";
 import logoImage from "../assets/logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { uiActions } from "../Store/UI-slice";
 
 export default function Header() {
-    const cartCtx = useContext(CartContext); //uvozimo state-ove, trebaju nam podaci o spremljenim stvarima te funkcija za otvaranje košarice
-    const shoppingProgressCtx = useContext(ShoppingProgressContext);
+    const cartItems = useSelector(state => state.cart.items)
+    const dispatch = useDispatch();
 
     //zbrajamo item quantity propertije iz state arraya kako bi dobili broj stavki
-    const cartTotal = cartCtx.items.reduce((total, item) => {
+    const cartTotal = cartItems.reduce((total, item) => {
         return total + item.quantity;
 
     }, 0)
 
     function handleOpenCart () {
-        shoppingProgressCtx.showCart(); //funkcija iz contexta
+        dispatch(uiActions.showCart()); //funkcija iz contexta
     }
     return (
         <header id="header">

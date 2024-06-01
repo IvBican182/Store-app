@@ -1,6 +1,7 @@
 import Item from "./Item";
 import useHttp from "../hooks/useHttp";
 import Error from "./Error";
+import { Fragment } from "react";
 
 
 const requestConfig = {};
@@ -24,11 +25,13 @@ export default function ShopList () {
 
     //u returnu prikazujemo dobivene podatke iz našeg state-a (items array)
     return (
+        <Fragment>
             <ul className="shop-list">
                 {loadedItems.map((shopItem) => {
                     return <Item key={shopItem.id} shopItem={shopItem}/>
                 })}
             </ul>
+        </Fragment>
         
     )
 }

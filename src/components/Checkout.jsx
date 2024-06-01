@@ -1,11 +1,11 @@
-import { useContext } from "react"
-import ShoppingProgressContext from "../Store/ShoppingProgressContext"
-import CartContext from "../Store/CartContext";
+import { useDispatch, useSelector } from "react-redux";
 import Input from "./UI/Input";
 import Button from "./UI/Button";
 import Modal from "./UI/Modal";
 import useHttp from "../hooks/useHttp";
 import { currencyFormatter } from "../utils/formatter";
+import { uiActions } from "../Store/UI-slice";
+import { cartActions } from "../Store/cartState-slice";
 
 //određujemo config za slanje podataka.
 const requestConfig = {
@@ -16,8 +16,9 @@ const requestConfig = {
 }
 
 export default function checkout() {
-    const shoppingProgressCtx = useContext(ShoppingProgressContext); //uvozimo state-ove
-    const cartCtx = useContext(CartContext);
+    const dispatch = useDispatch();
+    const cartItems = useSelector(state => state.cart.items);
+    const uiProgress = useSelector(state => state.ui.progress)
 
     //primamo vrijednosti iz useHttp hooka
     const {
@@ -28,17 +29,17 @@ export default function checkout() {
 
 
     //određujemo totalnu vrijednost košarice
-    const cartTotal = cartCtx.items.reduce((totalItemPrice, item) => {
+    const cartTotal = cartItems.reduce((totalItemPrice, item) => {
         return totalItemPrice + item.quantity * item.price;
     }, 0)
     //funkcija za sakrivanje Checkout modal-a
     function handleClose () {
-        shoppingProgressCtx.hideCheckout();
+        dispatch(uiActions.hideCheckout());
     }
     //funkcija koja zatvara checkout , ali i čisti našu košaricu te postavlja items Array na initialValue (prazan array)
     function handleFinish () {
-        shoppingProgressCtx.hideCheckout();
-        cartCtx.clearCart();
+        dispatch(uiActions.hideCheckout());
+        dispatch(cartActions.clearCart());
         clearData();
         
 
@@ -60,7 +61,7 @@ export default function checkout() {
         //šaljemo request
         sendRequest(JSON.stringify({
             order: {
-                items: cartCtx.items,
+                items: cartItems,
             }
         }));
 
@@ -70,7 +71,7 @@ export default function checkout() {
     //ukoliko pošaljemo request i imamo nekakav data , otvori Success Modal
     if(data) {
         return ( <Modal
-            open={shoppingProgressCtx.progress === "checkout"}onClose={handleClose}> 
+            open={uiProgress === "checkout"}onClose={handleClose}> 
             <h2>Thank you for your purchase !</h2>
             <p className="modal-actions">
                 <Button onClick={handleFinish}>Okay</Button>
@@ -82,7 +83,7 @@ export default function checkout() {
    
 
     return (
-        <Modal open={shoppingProgressCtx.progress === "checkout"} //ukoliko je progress === "checkout" otvori Checkout Modal
+        <Modal open={uiProgress === "checkout"} //ukoliko je progress === "checkout" otvori Checkout Modal
         onClose={handleFinish}>
             <form onSubmit={handleSubmit}>
                 <h2>Checkout:</h2>
